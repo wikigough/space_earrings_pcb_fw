@@ -1,8 +1,10 @@
 ## Ignore Code Composer Studio files as recommended here: 
 ## https://software-dl.ti.com/ccs/esd/documents/sdto_ccs_source-control.html
 
-[Rr]elease/*
-[Dd]ebug/*
+space_earrings/[Rr]elease/*
+space_earrings/[Dd]ebug/*
 .xdchelp
-[Cc]onfig/*
-.launches/*
+space_earrings/[Cc]onfig/*
+space_earrings/.launches/*
+*.idx
+space_earrings/driverlib/*
