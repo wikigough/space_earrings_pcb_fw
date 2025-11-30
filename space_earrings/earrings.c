@@ -20,22 +20,34 @@ void init_earrings(void)
     // initialise gpios
     init_gpios();
 
+    // init variables for twinkle animation
+    init_twinkle();
+
 }
 
 void run_earrings(void)
 {
-    uint8_t led_list[9] = {LED1, LED2, LED3, LED4, LED5, LED6, LED7, LED8, LED9};
-    uint8_t led_port_list[9] = {LED1_PORT, LED2_PORT, LED3_PORT, LED4_PORT, LED5_PORT, LED6_PORT, LED7_PORT, LED8_PORT, LED9_PORT};
     uint16_t i;
 
     while(1)
     {
-        for (i=0; i<9; i++)
+        // go to sleep and wait for interrupt wakeup. 
+        __bis_SR_register(LPM0_bits | GIE);          // Enter LPM0 w/ interrupt
+        // check if interrupt is the 1ms timer interrupt.  
+
+        if (timer_1ms_flag_get())
+        //if(get_switch_flag())
         {
-            DELAY_US(1000000);
-            turn_off_all_leds();
-            set_gpio(led_list[i], led_port_list[i]);
+            //simple_blink();
+
+                        
+            twinkle();
+            //clear_switch_flag();
+            timer_1ms_flag_reset();
+
+
         }
-        
+           
     }
+   
 }

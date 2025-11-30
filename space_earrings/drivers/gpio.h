@@ -33,6 +33,9 @@
 #define LED4                BIT6
 #define LED5                BIT7
 
+// PORT 4
+#define SW1                 BIT1
+
 
 
 /*
@@ -53,6 +56,11 @@
 #define LED4_PORT            3
 #define LED5_PORT            3
 
+// PORT 4
+#define SW1_PORT             4
+
+
+
 /*
  * @brief GPIO initialisation function. 
  */
@@ -64,5 +72,8 @@ void clear_gpio(uint8_t pin, uint8_t port);
 
 void turn_off_all_leds(void);
 
+void clear_switch_flag(void);
+
+uint8_t get_switch_flag(void);
 
 #endif //DRIVERS_GPIO_H
