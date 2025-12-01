@@ -1,3 +1,9 @@
+/**
+ * @file adc.c
+ * @brief Battery voltage sampling using the on-chip ADC.
+ * @ingroup ADC_DRIVER
+ */
+
 #include "drivers/adc.h"
 #include <stdint.h>
 #include "msp430fr2355.h"
@@ -48,6 +54,11 @@ void clear_conversion_ready()
 }
 
 #pragma vector=ADC_VECTOR
+/**
+ * @brief ADC interrupt service routine that latches the conversion result and flags completion.
+ * @ingroup ADC_DRIVER
+ * @note This is an internal helper; it is not exposed in the public header.
+ */
 __interrupt void ADC_ISR(void)
 {
     switch(__even_in_range(ADCIV,ADCIV_ADCIFG))

@@ -1,17 +1,27 @@
 
-
+/**
+ * @file earrings.c
+ * @brief Top-level application loop, battery and brightness management.
+ * @ingroup EARRINGS_APP
+ */
 
 #include "earrings.h"
 #include "drivers/gpio.h"
 #include "drivers/clock.h"
 #include "drivers/adc.h"
 #include "drivers/opamp.h"
+#include "led_control.h"
 #include <stdint.h>
 
+// private variables
 uint8_t batt_low_counter = 0;
 uint8_t battery_good_flag = 1;
 uint8_t brightness = 50;
 uint16_t scaled_brightness = 255; // max brightness
+
+//private functions
+uint8_t get_scaled_brightness(uint8_t brightness);
+uint8_t brightness_check(void);
 
 void init_earrings(void)
 {
@@ -43,7 +53,6 @@ void init_earrings(void)
 
 void run_earrings(void)
 {
-    uint16_t i;
     uint16_t battery_voltage;
 
     while(1)
@@ -121,7 +130,12 @@ uint8_t batt_low_handler(uint16_t battery_voltage)
     return battery_good;
 }
 
-
+/**
+ * @brief Measure ambient light using the comparator and update the internal brightness level.
+ * @ingroup EARRINGS_APP
+ * @return Returns the internal DAC setting that feeds into the comparator, which can be scaled later for brightness.
+ * @note This is an internal helper; it is not exposed in the public header.
+ */
 uint8_t brightness_check(void)
 {
     // firstly clear any comparator flags
@@ -145,6 +159,14 @@ uint8_t brightness_check(void)
 
 }
 
+
+/**
+ * @brief Convert the logical brightness level as indicated by the DAC setting into an 8-bit PWM brightness scaling factor.
+ * @ingroup EARRINGS_APP
+ * @param brightness Current logical brightness level or PWM scaling factor.
+ * @return Return value as described in the detailed design.
+ * @note This is an internal helper; it is not exposed in the public header. Currently very simple.
+ */
 uint8_t get_scaled_brightness(uint8_t brightness)
 {
     uint8_t scaled_brightness;

@@ -1,6 +1,7 @@
-/*
+/**
  * @file gpio.c
- * @brief Implementation of gpio initialisation functions. 
+ * @brief GPIO configuration, LED control and switch handling.
+ * @ingroup GPIO_DRIVER
  */
 
 #include "drivers/gpio.h"
@@ -96,18 +97,20 @@ uint8_t read_gpio(uint8_t pin, uint8_t port)
 
     if (port == 2)
     {
-        P2OUT &= ~pin;
+        result = P2IN & pin;
     }
 
     if (port == 3)
     {
-        P3OUT &= ~pin;
+        result = P3IN & pin;
     }
 
     if (port == 4)
     {
-        P4OUT &= ~pin;
+        result = P4IN & pin;
     }
+
+    return result;
 }
 
 void turn_off_all_leds()
@@ -124,6 +127,11 @@ void turn_off_all_leds()
 
 }
 
+/**
+ * @brief Set the software flag indicating that the user switch has been pressed.
+ * @ingroup GPIO_DRIVER
+ * @note This is an internal helper; it is not exposed in the public header.
+ */
 void set_switch_flag()
 {
     switch_flag = 1;
@@ -140,10 +148,13 @@ uint8_t get_switch_flag()
     return switch_flag;
 }
 
-// ------------------------------
-// Port 4 ISR
-// ------------------------------
+
 #pragma vector = PORT4_VECTOR
+/**
+ * @brief Port 4 interrupt service routine that debounces the switch and flags the event.
+ * @ingroup GPIO_DRIVER
+ * @note This is an internal helper; it is not exposed in the public header.
+ */
 __interrupt void Port_4_ISR(void)
 {
     if (P4IFG & BIT1) {
