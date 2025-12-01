@@ -32,7 +32,7 @@ typedef struct
 
 void simple_blink(void);
 void init_twinkle(void);
-uint8_t sine_single_led(uint8_t led_num, uint16_t *iter);
-void twinkle(void);
+uint8_t sine_single_led(uint8_t led_num, uint16_t *iter, uint8_t brightness);
+void twinkle(uint8_t brightness);
 
 #endif //LED_CONTROL_H

@@ -28,4 +28,8 @@ uint8_t timer_1ms_flag_get(void);
 
 void timer_1ms_flag_reset(void);
 
+uint8_t timer_1ms_flag_get(void);
+
+void timer_1ms_flag_reset(void);
+
 #endif //CLOCK_H

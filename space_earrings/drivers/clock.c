@@ -5,13 +5,17 @@
 
 // private variable declerations
 static volatile uint8_t timer_1ms_flag = 0;
+static volatile uint8_t timer_1s_flag = 0;
 
 // private function decleration
-int8_t xtal_init();
+void xtal_init();
 void timer_1ms_flag_set();
+void timer_1s_flag_set();
+void enable_millis_timer();
+void enable_second_timer();
 
 // private function decleration
-int8_t xtal_init()
+void xtal_init()
 {
     // Description: Configure ACLK = XT1 crystal = 32768Hz,
     //               MCLK = DCO + XT1CLK REF = 1MHz,
@@ -61,8 +65,8 @@ int8_t xtal_init()
     
 
 
-    P1DIR |= BIT1 | BIT0;                   // see table 6-63 in the *datasheet* - we want to enable P1.0 = SMCLK and P1.1 as ACLK
-    P1SEL1 |= BIT1 | BIT0;                  // see table 6.63. P1SEL0 is default 00h on startup, so no need to write to that. 
+    //P1DIR |= BIT1 | BIT0;                   // see table 6-63 in the *datasheet* - we want to enable P1.0 = SMCLK and P1.1 as ACLK
+    //P1SEL1 |= BIT1 | BIT0;                  // see table 6.63. P1SEL0 is default 00h on startup, so no need to write to that. 
 
     PM5CTL0 &= ~LOCKLPM5;                   // Disable the GPIO power-on default high-impedance mode
                                             // to activate previously configured port settings
@@ -76,8 +80,13 @@ void clock_init()
 {
     xtal_init();
     enable_millis_timer();
+    enable_second_timer();
 }
 
+
+/* -------------------------------------
+//      millis timer
+----------------------------------------*/
 // Configure Timer B0 to trigger every 1ms. 
 // for some reason cant access Timer A?
 void enable_millis_timer()
@@ -108,11 +117,55 @@ void timer_1ms_flag_reset(void)
 }
 
 
+/* -------------------------------------
+//      seconds timer
+----------------------------------------*/
+
+void enable_second_timer()
+{
+    TB1CCTL0 |= CCIE; // TBCCR0 interrupt enabled
+    //32.768 = ~1ms, 32768 = 1s, 0.5ms = 16
+    TB1CCR0 = 32768;
+    TB1CTL = TBSSEL__ACLK | MC__UP; // ACLK, UP mode
+    
+    // enable debug output for 1s timer. - debug only! uncomment when not in use
+    P6DIR |= BIT6;
+}
+
+void timer_1s_flag_set()
+{
+    timer_1s_flag = 1;
+}
+
+uint8_t timer_1s_flag_get()
+{
+    return timer_1s_flag;
+}
+
+void timer_1s_flag_reset(void)
+{
+    timer_1s_flag = 0;
+}
+
+/* -------------------------------------
+//      Interrupts
+----------------------------------------*/
+
+
 // Timer0_B0 interrupt service routine
 #pragma vector = TIMER0_B0_VECTOR
 __interrupt void Timer0_B0_ISR (void)
 {
     P3OUT ^= BIT0;
     timer_1ms_flag_set(); // flag for main loop.
+    __bic_SR_register_on_exit(LPM0_bits); // wakeup main CPU
+}
+
+// Timer1_B0 interrupt service routine
+#pragma vector = TIMER1_B0_VECTOR
+__interrupt void Timer1_B0_ISR (void)
+{
+    P6OUT ^= BIT6;
+    timer_1s_flag_set(); // flag for main loop.
     __bic_SR_register_on_exit(LPM0_bits); // wakeup main CPU
 }

@@ -64,7 +64,7 @@ void init_twinkle(void)
         
 }
 
-uint8_t sine_single_led(uint8_t led_num, uint16_t *iter)
+uint8_t sine_single_led(uint8_t led_num, uint16_t *iter, uint8_t brightness)
 {
     uint8_t sinusoid_index = iter_to_sinusoid_index[*iter]; 
 
@@ -77,7 +77,9 @@ uint8_t sine_single_led(uint8_t led_num, uint16_t *iter)
 
 
     // find out if you need to be high or low with the current fine iteration
-    uint16_t transition_to_low = lower_bound + (uint16_t)((uint32_t)index_within_bound * max_led_blink_period_size) +((sinusoid[sinusoid_index] * max_led_blink_period_size) >> 8);
+    //uint16_t transition_to_low = lower_bound + (uint16_t)((uint32_t)index_within_bound * max_led_blink_period_size) +((sinusoid[sinusoid_index] * max_led_blink_period_size) >> 8);
+    uint16_t transition_to_low = lower_bound + (uint16_t)((uint32_t)index_within_bound * max_led_blink_period_size) +(((uint32_t)sinusoid[sinusoid_index] * max_led_blink_period_size * brightness) >> 16);
+    
 
     if (*iter < transition_to_low)
     {
@@ -94,12 +96,12 @@ uint8_t sine_single_led(uint8_t led_num, uint16_t *iter)
 
 }
 
-void twinkle(void)
+void twinkle(uint8_t brightness)
 {
     // GROUP 1: LEDs 1 -> 4 -> 7 twinkle with iter offset of 0
     if (led_active_track.led1_active)
     {
-        uint8_t end = sine_single_led(1, &led_iters.led1_iter);
+        uint8_t end = sine_single_led(1, &led_iters.led1_iter, brightness);
         if (end)
         {
             led_active_track.led1_active = 0;
@@ -108,7 +110,7 @@ void twinkle(void)
     }
     else if (led_active_track.led4_active) 
     {
-        uint8_t end = sine_single_led(4, &led_iters.led4_iter);
+        uint8_t end = sine_single_led(4, &led_iters.led4_iter, brightness);
         if (end)
         {
             led_active_track.led4_active = 0;
@@ -117,7 +119,7 @@ void twinkle(void)
     }
     else if (led_active_track.led7_active) 
     {
-        uint8_t end = sine_single_led(7, &led_iters.led7_iter);
+        uint8_t end = sine_single_led(7, &led_iters.led7_iter, brightness);
         if (end)
         {
             led_active_track.led7_active = 0;
@@ -131,7 +133,7 @@ void twinkle(void)
     // GROUP 2: LEDs 2 -> 5 -> 8 twinkle with iter offset defined in led_iters
     if (led_active_track.led2_active)
     {
-        uint8_t end = sine_single_led(2, &led_iters.led2_iter);
+        uint8_t end = sine_single_led(2, &led_iters.led2_iter, brightness);
         if (end)
         {
             led_active_track.led2_active = 0;
@@ -140,7 +142,7 @@ void twinkle(void)
     }
     else if (led_active_track.led5_active) 
     {
-        uint8_t end = sine_single_led(5, &led_iters.led5_iter);
+        uint8_t end = sine_single_led(5, &led_iters.led5_iter, brightness);
         if (end)
         {
             led_active_track.led5_active = 0;
@@ -149,7 +151,7 @@ void twinkle(void)
     }
     else if (led_active_track.led8_active) 
     {
-        uint8_t end = sine_single_led(8, &led_iters.led8_iter);
+        uint8_t end = sine_single_led(8, &led_iters.led8_iter, brightness);
         if (end)
         {
             led_active_track.led8_active = 0;
@@ -163,7 +165,7 @@ void twinkle(void)
     // GROUP 3: LEDs 3 -> 6 -> 9 twinkle with iter offset defined in led_iters
     if (led_active_track.led3_active)
     {
-        uint8_t end = sine_single_led(3, &led_iters.led3_iter);
+        uint8_t end = sine_single_led(3, &led_iters.led3_iter, brightness);
         if (end)
         {
             led_active_track.led3_active = 0;
@@ -172,7 +174,7 @@ void twinkle(void)
     }
     else if (led_active_track.led6_active) 
     {
-        uint8_t end = sine_single_led(6, &led_iters.led6_iter);
+        uint8_t end = sine_single_led(6, &led_iters.led6_iter, brightness);
         if (end)
         {
             led_active_track.led6_active = 0;
@@ -181,7 +183,7 @@ void twinkle(void)
     }
     else if (led_active_track.led9_active) 
     {
-        uint8_t end = sine_single_led(9, &led_iters.led9_iter);
+        uint8_t end = sine_single_led(9, &led_iters.led9_iter, brightness);
         if (end)
         {
             led_active_track.led9_active = 0;
