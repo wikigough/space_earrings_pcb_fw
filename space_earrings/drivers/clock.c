@@ -39,23 +39,30 @@ void xtal_init()
 
 
     //  f(DCOCLK) = 2^FLLD * (FLLN+1) * (fFLLREFCLK / n).
-    //  FLLD = 0, FLLN =30, n=1, DIVM =1, 
-    //  f(DCOCLK) = 2^0 * (62+1)*32768Hz = 4MHz,
+    //  FLLD = 0, FLLN =62, n=1, DIVM =1, 
+    //  f(DCOCLK) = 2^0 * (62+1)*32768Hz = 2MHz,
     //  f(DCODIV) = (62+1)*32768Hz = 2MHz,
     //  ACLK = XT1 = ~32768Hz, SMCLK = MCLK = f(DCODIV) = 2MHz.
     // Software trimming not used here, since an accurate clock is not needed. 
 
     __bis_SR_register(SCG0);                                   // Disable FLL before adjusting
     CSCTL3 = SELREF__XT1CLK;                                        // Set XT1 as FLL reference source - see Table3-7 in user guide
-    CSCTL1 = DCOFTRIMEN_1 | DCOFTRIM0 | DCOFTRIM1 | DCORSEL_1;      // DCOFTRIM=3, DCO Range = 2MHz
-    CSCTL2 = FLLD_0 + 62;                                           // DCODIV = 2MHz
+    //CSCTL1 = DCOFTRIMEN_1 | DCOFTRIM0 | DCOFTRIM1 | DCORSEL_1;      // DCOFTRIM=3, DCO Range = 4MHz
+    //CSCTL2 = FLLD_0 + 62;                                           // DCODIV = 2MHz
+
+    CSCTL1 = DCOFTRIMEN_1 | DCOFTRIM_6 | DCORSEL_1;                 // DCOFTRIM=6, DCO Range = 4MHz
+    CSCTL2 = FLLD_0 + 121;                                           // DCODIV = 4MHz
     __delay_cycles(3);
     __bic_SR_register(SCG0);                                    // Enable FLL after adjusting
-    CSCTL0 = 256;
+    CSCTL0 = 256;                                                    // mid range DCO setting
     CSCTL5 &= ~ (DIVS0 | DIVS1);
     
     CSCTL4 = SELMS__DCOCLKDIV | SELA__XT1CLK;  // set ACLK = XT1CLK = 32768Hz
                                                // DCOCLK = MCLK and SMCLK source
+
+    // turn on the SMCLK debug output
+    //P1DIR |= BIT0; // comment out if not debugging since this clashes with the low battery voltage LED output!
+    //P1SEL1 |= BIT0; // comment out if not debugging since this clashes with the low battery voltage LED output!
 
     PM5CTL0 &= ~LOCKLPM5;                   // Disable the GPIO power-on default high-impedance mode
                                             // to activate previously configured port settings
@@ -84,7 +91,7 @@ void enable_millis_timer()
 {
     TB0CCTL0 |= CCIE; // TBCCR0 interrupt enabled
     //32.768 = ~1ms, 32768 = 1s, 0.5ms = 16
-    TB0CCR0 = 33;
+    TB0CCR0 = 16;
     TB0CTL = TBSSEL__ACLK | MC__UP; // ACLK, UP mode
     
     // enable debug output for 1ms timer.

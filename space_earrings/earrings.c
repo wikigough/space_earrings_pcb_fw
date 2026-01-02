@@ -16,8 +16,6 @@
 // private variables
 uint8_t batt_low_counter = 0;
 uint8_t battery_good_flag = 1;
-uint8_t brightness = 50;
-uint16_t scaled_brightness = 255; // max brightness
 
 //private functions
 uint8_t get_scaled_brightness(uint8_t brightness);
@@ -54,6 +52,7 @@ void init_earrings(void)
 void run_earrings(void)
 {
     uint16_t battery_voltage;
+    static uint8_t brightness = 160; // initial brightness setting, variable changed by photodiode measurement
 
     while(1)
     {
@@ -63,7 +62,7 @@ void run_earrings(void)
         // check if interrupt is the 1ms timer interrupt and we are not in low power mode.
         if (timer_1ms_flag_get() & battery_good_flag)
         {
-            twinkle(brightness);
+            twinkle_two(brightness);
             timer_1ms_flag_reset();
 
         }
@@ -82,9 +81,10 @@ void run_earrings(void)
                 }
                 timer_1s_flag_reset();
             }
-
-            uint8_t temp_brightness = brightness_check();
-            brightness = get_scaled_brightness(temp_brightness);
+            
+            // if photodiode connected, execute brightness check to adjust global brightness - comment out if photodiode not connected!
+            //uint8_t temp_brightness = brightness_check();
+            //brightness = get_scaled_brightness(temp_brightness);
 
         }
         //for debug only

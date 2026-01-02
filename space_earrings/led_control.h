@@ -62,11 +62,18 @@ void init_twinkle(void);
 uint8_t sine_single_led(uint8_t led_num, uint16_t *iter, uint8_t brightness);
 
 /**
- * @brief Advance the multi-LED twinkle animation based on the current brightness level.
+ * @brief Advance the multi-LED twinkle animation based on the current brightness level. Three LEDs on at a time.
  * @ingroup LED_CONTROL
  * @param brightness Current logical brightness level or PWM scaling factor.
  */
-void twinkle(uint8_t brightness);
+void twinkle_three(uint8_t brightness);
+
+/**
+ * @brief Advance the multi-LED twinkle animation based on the current brightness level. Two LEDs on at a time. 
+ * @ingroup LED_CONTROL
+ * @param brightness Current logical brightness level or PWM scaling factor.
+ */
+void twinkle_two(uint8_t brightness);
 
 /** @} */
 #endif //LED_CONTROL_H
