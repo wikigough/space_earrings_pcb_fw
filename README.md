@@ -12,17 +12,10 @@ This firmware provides:
 See ARCHITECTURE.md and STATE_MACHINES.md for full system documentation.
 
 ## Build Instructions
-Using MSP430-GCC:
-
-```
-msp430-elf-gcc -mmcu=msp430frxxx -Os -Wall -o firmware.elf src/*.c src/drivers/*.c
-```
-
-Flash using mspdebug:
-
-```
-mspdebug tilib "prog firmware.elf"
-```
+The project has been compiled within CCS Version 20.3.1.5_1.9.1.
+ - To build, go to: `Project >> Build Projects`
+ - To run, go to: `Run >> Flash Project`
+Command line building has not been attempted. 
 
 ## Documentation
 Run:
