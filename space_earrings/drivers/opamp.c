@@ -55,7 +55,8 @@ void init_comp(void)
     // currently this is set up as P2.4, but can also be P2.5. 
     // for dim lighting = comparator output high, bright lighting = comparator output low.
 
-    CP1CTL0 = CPPSEL_6 | CPNSEL_1;             // Select SAC0 and DAC output as eCOMP0 inputs - note SAC0 needs to be fed in via a wire link to P2.4
+    //CP1CTL0 = CPPSEL_6 | CPNSEL_1;             // Select SAC0 and DAC output as eCOMP0 inputs - note SAC0 needs to be fed in via a wire link to P2.4
+    CP1CTL0 = CPPSEL_6 | CPNSEL_0;             // Select SAC0 and DAC output as eCOMP0 inputs - with wire link to P2.5.
     CP1CTL0 |= CPPEN | CPNEN;                  // Enable eCOMP inputs
     CP1DACCTL |= CPDACREFS | CPDACEN;          // Select on-chip VREF and enable DAC
     CP1DACDATA |= 20;                          // CPDACBUF1=On-chip VREF * 20/64
