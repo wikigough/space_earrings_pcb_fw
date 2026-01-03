@@ -58,5 +58,3 @@ sequenceDiagram
         main->>main: get_scaled_brightness(brightness)
     end
 ```
-
-These diagrams are intended as starting points; you can refine state names and transitions as the firmware evolves.
